@@ -7,7 +7,6 @@
 #include <fstream>
 #include <string>
 
-
 using namespace std;
 
 void setColor(int color)
@@ -51,7 +50,7 @@ void soundStartGame()
 }
 void soundTimer()
 {
-    Beep(1000,80);
+    Beep(1000, 80);
 }
 void startSection()
 {
@@ -76,10 +75,10 @@ void startSection()
     clear();
     setColor(14);
 
-    for (int i = 0; i <= 50 ; i++)
+    for (int i = 0; i <= 50; i++)
     {
         clear();
-        COORD l = {SHORT(i+1), 20};
+        COORD l = {SHORT(i + 1), 20};
         COORD r = {SHORT(155 - i), 20};
 
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), l);
@@ -115,7 +114,7 @@ int mainMenu()
             centerText(options[i], 16 + i * 2);
         }
 
-        int key = _getch();   
+        int key = _getch();
         if (key == 224)
         {
             key = _getch();
@@ -158,7 +157,7 @@ void show7667WithBeep()
     for (int i = 0; i <= 30; i++)
     {
         clear();
-        COORD l = {SHORT(i+1), 20};
+        COORD l = {SHORT(i + 1), 20};
         COORD r = {SHORT(155 - i), 20};
 
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), l);
@@ -175,7 +174,6 @@ void show7667WithBeep()
     centerText("7667", 20);
     Sleep(3000);
 }
-
 
 int game7667Menu()
 {
@@ -217,7 +215,6 @@ int game7667Menu()
         }
     }
 }
-
 
 int score = 0;
 string playerName;
@@ -463,7 +460,7 @@ void game2048()
 void drawFrame()
 {
     setColor(15);
-    for (int x = 0; x < 154 ; x++)
+    for (int x = 0; x < 154; x++)
     {
         COORD t = {(SHORT)x, 0};
         COORD b = {(SHORT)x, 40};
@@ -494,7 +491,7 @@ void saveGame(string username, int X, int N, int M, int total)
 void playCustom()
 {
     clear();
-    system("color 0F"); 
+    system("color 0F");
     drawFrame();
 
     setColor(15);
@@ -575,32 +572,129 @@ void playCustom()
     soundStartGame();
     Sleep(5000);
 }
-bool exitConfirm() {
+bool exitConfirm()
+{
     int choice = 0;
-    string opt[2] = { "Yes", "No" };
+    string opt[2] = {"Yes", "No"};
 
-    while (true) {
+    while (true)
+    {
         clear();
         drawFrame();
         centerText("Are you sure that you want to exit???", 10);
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 2; i++)
+        {
             setColor(i == choice ? 12 : 15);
             centerText(opt[i], 12 + i);
         }
 
         int k = _getch();
-        if (k == 224) {
+        if (k == 224)
+        {
             k = _getch();
-            if (k == 75 && choice > 0) choice--;  
-            if (k == 77 && choice < 1) choice++;
+            if (k == 75 && choice > 0)
+                choice--;
+            if (k == 77 && choice < 1)
+                choice++;
         }
-        else if (k == 13) {
+        else if (k == 13)
+        {
             return choice == 0;
         }
     }
 }
 
+void playDefault(string username)
+{
+    bool playAgain = true;
+
+    while (playAgain)
+    {
+        int Total = 0;
+        clear();
+        system("color 0F");
+        drawFrame();
+
+        while (Total < 20)
+        {
+            clear();
+            system("color 0F");
+            drawFrame();
+
+            setColor(2);
+            centerText("◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇", 18);
+            centerText("◇                    ◇", 19);
+            centerText("◇   TOTAL : " + to_string(Total) + "   ◇", 20);
+            centerText("◇                    ◇", 21);
+            centerText("◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇", 22);
+
+            setColor(15);
+            centerText("Choose 1 or 2", 16);
+
+            int userChoice;
+            do
+            {
+                userChoice = _getch() - '0';
+            } while (userChoice != 1 && userChoice != 2);
+
+            Total += userChoice;
+
+            if (Total >= 20)
+                break;
+
+            int aiChoice;
+            if ((Total + 1) % 3 == 2)
+                aiChoice = 1;
+            else
+                aiChoice = 2;
+
+            Total += aiChoice;
+        }
+
+        clear();
+        drawFrame();
+        Sleep(1000);
+
+        setColor(10);
+        centerText(username + " is the WINNER!", 12);
+        Sleep(3000);
+
+        int choice = 0;
+        string options[2] = {"Yes", "No"};
+
+        while (true)
+        {
+            clear();
+            drawFrame();
+            setColor(15);
+            centerText("Would you like to continue?", 10);
+
+            for (int i = 0; i < 2; i++)
+            {
+                setColor(i == choice ? 12 : 15);
+                centerText(options[i], 12 + i);
+            }
+
+            int key = _getch();
+            if (key == 224)
+            {
+                key = _getch();
+                if (key == 75 && choice > 0)
+                    choice--;
+                if (key == 77 && choice < 1)
+                    choice++;
+            }
+            else if (key == 13)
+            {
+                playAgain = (choice == 0);
+                break;
+            }
+        }
+    }
+
+    exit(0);
+}
 
 int main()
 {
@@ -619,11 +713,14 @@ int main()
         show7667WithBeep();
 
         int mode = game7667Menu();
-        if(mode==0){
+        if (mode == 0)
+        {
             playCustom();
-
-        }else{
-            clear();
+        }
+        else
+        {
+            string username = " SADF ";
+            playDefault(username);
         }
     }
 
