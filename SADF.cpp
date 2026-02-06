@@ -460,6 +460,148 @@ void game2048()
     }
 }
 
+void drawFrame()
+{
+    setColor(15);
+    for (int x = 0; x < 154 ; x++)
+    {
+        COORD t = {(SHORT)x, 0};
+        COORD b = {(SHORT)x, 40};
+        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), t);
+        cout << "M";
+        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), b);
+        cout << "W";
+    }
+
+    for (int y = 0; y < 40; y++)
+    {
+        COORD l = {0, (SHORT)y};
+        COORD r = {155, (SHORT)y};
+        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), l);
+        cout << "H";
+        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), r);
+        cout << "H";
+    }
+}
+
+void saveGame(string username, int X, int N, int M, int total)
+{
+    ofstream file("save.txt");
+    file << username << endl;
+    file << X << " " << N << " " << M << " " << total;
+    file.close();
+}
+void playCustom()
+{
+    clear();
+    system("color 0F"); 
+    drawFrame();
+
+    setColor(15);
+    centerText("Published By Arian ", 20);
+    Sleep(5000);
+
+    clear();
+    drawFrame();
+    setColor(10);
+    centerText("Enter your name:", 20);
+
+    string username;
+    cin >> username;
+
+    int X, N, M;
+    clear();
+    drawFrame();
+    centerText("Enter X number that you want to reach : ", 8);
+    cin >> X;
+    centerText("Enter N first number : ", 10);
+    cin >> N;
+    centerText("Enter M second number : ", 12);
+    cin >> M;
+
+    int Total = 0;
+    bool gameOver = false;
+
+    while (!gameOver)
+    {
+        clear();
+        drawFrame();
+
+        if (Total > 2 * X / 3)
+            system("color 4F");
+        else if (Total > X / 3)
+            system("color 6F");
+        else
+            system("color 2F");
+
+        setColor(15);
+        centerText("Choose N or M", 8);
+        centerText("N = " + to_string(N), 10);
+        centerText("M = " + to_string(M), 11);
+
+        int userChoice;
+        cin >> userChoice;
+        Total += userChoice;
+
+        saveGame(username, X, N, M, Total);
+
+        if (Total >= X)
+        {
+            gameOver = true;
+            break;
+        }
+
+        int aiChoice;
+        if ((Total + M) % (M + N) == X % (M + N))
+            aiChoice = M;
+        else
+            aiChoice = N;
+
+        Total += aiChoice;
+        saveGame(username, X, N, M, Total);
+
+        if (Total >= X)
+        {
+            gameOver = true;
+            break;
+        }
+    }
+
+    clear();
+    drawFrame();
+    setColor(14);
+    centerText("You begin winner hooooooooraaaaaa", 11);
+    centerText(username, 13);
+    soundStartGame();
+    Sleep(5000);
+}
+bool exitConfirm() {
+    int choice = 0;
+    string opt[2] = { "Yes", "No" };
+
+    while (true) {
+        clear();
+        drawFrame();
+        centerText("Are you sure that you want to exit???", 10);
+
+        for (int i = 0; i < 2; i++) {
+            setColor(i == choice ? 12 : 15);
+            centerText(opt[i], 12 + i);
+        }
+
+        int k = _getch();
+        if (k == 224) {
+            k = _getch();
+            if (k == 75 && choice > 0) choice--;  
+            if (k == 77 && choice < 1) choice++;
+        }
+        else if (k == 13) {
+            return choice == 0;
+        }
+    }
+}
+
+
 int main()
 {
     startSection();
@@ -477,12 +619,12 @@ int main()
         show7667WithBeep();
 
         int mode = game7667Menu();
-        clear();
-        setColor(15);
+        if(mode==0){
+            playCustom();
 
-        centerText(mode == 0 ? "2" : "1", 12);
-        soundSelect();
-        Sleep(3000);
+        }else{
+            clear();
+        }
     }
 
     return 0;
