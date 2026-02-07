@@ -154,20 +154,20 @@ void show7667WithBeep()
     clear();
     setColor(14);
 
-    for (int i = 0; i <= 30; i++)
+    for (int i = 0; i <= 50; i++)
     {
         clear();
         COORD l = {SHORT(i + 1), 20};
-        COORD r = {SHORT(155 - i), 20};
+        COORD r = {SHORT(154 - i), 20};
 
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), l);
-        cout << " 76 ";
+        cout << "76";
 
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), r);
-        cout << " 67 ";
+        cout << "67";
 
         soundTimer();
-        Sleep(120);
+        Sleep(90);
     }
 
     clear();
@@ -478,7 +478,7 @@ void drawFrame()
     for (int x = 0; x < 154; x++)
     {
         COORD t = {(SHORT)x, 0};
-        COORD b = {(SHORT)x, 44};
+        COORD b = {(SHORT)x, 46};
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), t);
         setColor(13);
         cout << "M";
@@ -487,10 +487,10 @@ void drawFrame()
         cout << "W";
     }
 
-    for (int y = 0; y < 40; y++)
+    for (int y = 0; y < 46; y++)
     {
         COORD l = {0, (SHORT)y};
-        COORD r = {155, (SHORT)y};
+        COORD r = {154, (SHORT)y};
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), l);
         setColor(9);
         cout << "H";
@@ -500,35 +500,73 @@ void drawFrame()
     }
 }
 
-void saveGame(string username, int X, int N, int M, int total)
+void saveGame(string username, int X, int N, int M, int total, string result)
 {
     ofstream file("save.txt");
-    file << username << endl;
-    file << X << " " << N << " " << M << " " << total;
+    file << "Player : " << username << endl;
+    file << "Final Number : " << X << "\n"
+         << "Frist Number : " << N << "\n"
+         << "Second Number : " << M
+         << "\n"
+         << "Total : " << total << "\n"
+         << "Result : " << result << "\n";
     file.close();
 }
+void drawFrame2(char a, char y, char c, char d)
+{
+    setColor(15);
+    for (int x = 0; x < 154; x++)
+    {
+        COORD t = {(SHORT)x, 0};
+        COORD b = {(SHORT)x, 46};
+        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), t);
+        setColor(13);
+        cout << a;
+        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), b);
+        setColor(5);
+        cout << y;
+    }
+
+    for (int y = 0; y < 46; y++)
+    {
+        COORD l = {0, (SHORT)y};
+        COORD r = {154, (SHORT)y};
+        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), l);
+        setColor(9);
+        cout << c;
+        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), r);
+        setColor(3);
+        cout << d;
+    }
+}
+
 void playCustom()
 {
     clear();
-    system("color F0");
+    system("color F5");
     drawFrame();
-
-    setColor(0);
-    centerText("Published By Arian ", 20);
+    centerText("Create By Arian ", 20);
     Sleep(5000);
     soundStartGame();
 
     clear();
     drawFrame();
     setColor(10);
-    centerText("Enter your name:", 20);
+    centerText("Enter your name : ", 20);
 
     string username;
     cin >> username;
 
-    int X, N, M;
+    char a, b, c, d;
     clear();
     drawFrame();
+    setColor(10);
+    centerText("Enter the character for Frame up , down , left and right in order : ", 20);
+    cin >> a >> b >> c >> d;
+
+    int X, N, M;
+    clear();
+    drawFrame2(a, b, c, d);
     centerText("Enter X number that you want to reach : ", 8);
     cin >> X;
     centerText("Enter N first number : ", 10);
@@ -538,32 +576,43 @@ void playCustom()
 
     int Total = 0;
     bool gameOver = false;
+    string winner;
+    string result;
 
     while (!gameOver)
     {
         clear();
-        drawFrame();
+        drawFrame2(a, b, c, d);
 
         if (Total > 2 * X / 3)
             system("color 4F");
-        else if (Total > X / 3)
-            system("color 6F");
+        else if (Total > ((X / 3) + 1))
+            system("color DB");
         else
-            system("color 2F");
+            system("color F0");
 
-        setColor(15);
         centerText("Choose N or M", 8);
         centerText("N = " + to_string(N), 10);
         centerText("M = " + to_string(M), 11);
+
+        centerText("◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇", 15);
+        centerText("◇                    ◇", 16);
+        centerText("◇     TOTAL : " + to_string(Total) + "     ◇", 17);
+        centerText("◇                    ◇", 18);
+        centerText("◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇", 19);
+        centerText("<<<<<<<<<<*>>>>>>>>>>>", 23);
+        centerText("<<<<<<<<<<*>>>>>>>>>>>", 25);
+        centerText("|                    |", 24);
+        centerText(username, 24);
 
         int userChoice;
         cin >> userChoice;
         Total += userChoice;
 
-        saveGame(username, X, N, M, Total);
-
         if (Total >= X)
         {
+            result = "winner";
+            winner = username;
             gameOver = true;
             break;
         }
@@ -575,20 +624,22 @@ void playCustom()
             aiChoice = N;
 
         Total += aiChoice;
-        saveGame(username, X, N, M, Total);
 
         if (Total >= X)
         {
+            result = "loser";
+            winner = "AI";
             gameOver = true;
             break;
         }
     }
+    saveGame(username, X, N, M, Total, result);
 
     clear();
     drawFrame();
     setColor(14);
-    centerText("You begin winner hooooooooraaaaaa", 11);
-    centerText(username, 13);
+    centerText(" The Winner Is \n", 18);
+    centerText(winner, 20);
     soundStartGame();
     Sleep(5000);
 }
@@ -601,12 +652,12 @@ bool exitConfirm()
     {
         clear();
         drawFrame();
-        centerText("Are you sure that you want to exit???", 10);
+        centerText("Are you sure that you want to exit???", 20);
 
         for (int i = 0; i < 2; i++)
         {
             setColor(i == choice ? 12 : 15);
-            centerText(opt[i], 12 + i);
+            centerText(opt[i], 22 + i);
         }
 
         int k = _getch();
