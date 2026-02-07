@@ -389,12 +389,27 @@ bool checkwin(int jadval[4][4])
                 return true;
     return false;
 }
+void centerText2048(int x, int y)
+{
+    COORD pos;
+    pos.X = x;
+    pos.Y = y;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
+}
 void game2048()
 {
     srand(time(0));
-
-    cout << "Enter player name: ";
+    centerText2048(68, 20);
+    cout << "Enter Player Name: ";
     getline(cin, playerName);
+    Sleep(500);
+    clear();
+
+    centerText2048(72, 20);
+    cout << "Hello " << playerName;
+    soundStartGame();
+    Sleep(5000);
+    clear();
 
     int jadval[4][4] = {0};
     addrandomnumber(jadval);
@@ -463,10 +478,12 @@ void drawFrame()
     for (int x = 0; x < 154; x++)
     {
         COORD t = {(SHORT)x, 0};
-        COORD b = {(SHORT)x, 40};
+        COORD b = {(SHORT)x, 44};
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), t);
+        setColor(13);
         cout << "M";
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), b);
+        setColor(5);
         cout << "W";
     }
 
@@ -475,8 +492,10 @@ void drawFrame()
         COORD l = {0, (SHORT)y};
         COORD r = {155, (SHORT)y};
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), l);
+        setColor(9);
         cout << "H";
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), r);
+        setColor(3);
         cout << "H";
     }
 }
@@ -491,12 +510,13 @@ void saveGame(string username, int X, int N, int M, int total)
 void playCustom()
 {
     clear();
-    system("color 0F");
+    system("color F0");
     drawFrame();
 
-    setColor(15);
+    setColor(0);
     centerText("Published By Arian ", 20);
     Sleep(5000);
+    soundStartGame();
 
     clear();
     drawFrame();
