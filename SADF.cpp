@@ -218,9 +218,42 @@ int game7667Menu()
 
 int score = 0;
 string playerName;
+bool soundEnabled = true;
+
 void setColor2048(int color)
 {
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+}
+void playWinSound()
+{
+    if (!soundEnabled)
+        return;
+    Beep(523, 200);
+    Beep(659, 200);
+    Beep(784, 300);
+}
+
+void playLoseSound()
+{
+    if (!soundEnabled)
+        return;
+    Beep(392, 200);
+    Beep(349, 200);
+    Beep(330, 300);
+}
+
+void playMoveSound()
+{
+    if (!soundEnabled)
+        return;
+    Beep(262, 50);
+}
+
+void playMergeSound()
+{
+    if (!soundEnabled)
+        return;
+    Beep(523, 100);
 }
 
 void printjadval(int jadval[4][4])
@@ -240,28 +273,29 @@ void printjadval(int jadval[4][4])
                 int val = jadval[i][j];
 
                 if (val == 2)
-                    setColor2048(9);
+                    setColor(9);
                 else if (val == 4)
-                    setColor2048(12);
+                    setColor(12);
                 else if (val == 8)
-                    setColor2048(10);
+                    setColor(10);
                 else if (val == 16)
-                    setColor2048(14);
+                    setColor(14);
                 else if (val == 32)
-                    setColor2048(11);
+                    setColor(11);
                 else if (val == 64)
-                    setColor2048(13);
+                    setColor(13);
                 else
-                    setColor2048(15);
+                    setColor(15);
 
                 printf(" %4d ", val);
-                setColor2048(7);
+                setColor(7);
                 cout << "|";
             }
         }
         cout << "\n#------#------#------#------#\n";
     }
 }
+
 void moveleft(int a[4])
 {
     int chap[4] = {0, 0, 0, 0};
@@ -270,6 +304,7 @@ void moveleft(int a[4])
         if (a[i] != 0)
             chap[index++] = a[i];
 
+    bool merged = false;
     for (int i = 0; i < 3; i++)
     {
         if (chap[i] != 0 && chap[i] == chap[i + 1])
@@ -277,6 +312,7 @@ void moveleft(int a[4])
             chap[i] *= 2;
             score += chap[i];
             chap[i + 1] = 0;
+            merged = true;
         }
     }
 
@@ -361,6 +397,7 @@ void addrandomnumber(int jadval[4][4])
         }
     }
 }
+
 bool checklose(int jadval[4][4])
 {
     for (int i = 0; i < 4; i++)
@@ -411,6 +448,12 @@ void game2048()
     Sleep(5000);
     clear();
 
+    char soundChoice;
+    cout << "Enable sound effects? (y/n): ";
+    cin >> soundChoice;
+    soundEnabled = (soundChoice == 'y' || soundChoice == 'Y');
+    cin.ignore();
+
     int jadval[4][4] = {0};
     addrandomnumber(jadval);
     addrandomnumber(jadval);
@@ -420,12 +463,24 @@ void game2048()
         system("cls");
         printjadval(jadval);
         cout << "Score: " << score << endl;
-        cout << "Use keys W/A/S/D to move. Press Ctrl+C to exit.\n";
+        cout << "Player: " << playerName << endl;
+        cout << "Sound: " << (soundEnabled ? "ON" : "OFF") << endl;
+        cout << "Use keys W/A/S/D to move. Press 'M' to toggle sound.\n";
 
         char c = _getch();
 
+        if (c == 'm' || c == 'M')
+        {
+            soundEnabled = !soundEnabled;
+            playMoveSound();
+            continue;
+        }
+
         int oldjadval[4][4];
         memcpy(oldjadval, jadval, sizeof(jadval));
+
+        bool moved = false;
+        bool merged = false;
 
         if (c == 'w' || c == 'W')
             moveupjadval(jadval);
@@ -438,20 +493,42 @@ void game2048()
         else
             continue;
 
-        bool changed = false;
         for (int i = 0; i < 4; i++)
+        {
             for (int j = 0; j < 4; j++)
+            {
                 if (oldjadval[i][j] != jadval[i][j])
-                    changed = true;
+                {
+                    moved = true;
 
-        if (changed)
+                    if (oldjadval[i][j] != 0 && jadval[i][j] == oldjadval[i][j] * 2)
+                    {
+                        merged = true;
+                    }
+                }
+            }
+        }
+
+        if (moved)
+        {
+            if (merged)
+            {
+                playMergeSound();
+            }
+            else
+            {
+                playMoveSound();
+            }
             addrandomnumber(jadval);
+        }
 
         if (checkwin(jadval))
         {
             system("cls");
             printjadval(jadval);
             cout << "YOU WIN\n";
+            playWinSound();
+            Sleep(2000);
             break;
         }
 
@@ -460,6 +537,8 @@ void game2048()
             system("cls");
             printjadval(jadval);
             cout << "YOU LOST\n";
+            playLoseSound();
+            Sleep(2000);
             break;
         }
     }
