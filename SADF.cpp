@@ -255,6 +255,30 @@ void playMergeSound()
         return;
     Beep(523, 100);
 }
+void openResultInNotepad(string name, int score, string result)
+{
+    string filename = "2048_result_" + name + ".txt";
+    ofstream resultFile(filename);
+
+    if (resultFile.is_open())
+    {
+        resultFile << "===================\n";
+        resultFile << "   2048 GAME RESULT\n";
+        resultFile << "===================\n\n";
+        resultFile << "Player Name: " << name << endl;
+        resultFile << "Final Score: " << score << endl;
+        resultFile << "Game Result: " << result << endl;
+        resultFile << "Date: " << __DATE__ << endl;
+        resultFile << "Time: " << __TIME__ << endl;
+        resultFile << "\n===================\n";
+        resultFile << "  Thanks for playing!\n";
+        resultFile << "===================\n";
+        resultFile.close();
+
+        string command = "notepad.exe " + filename;
+        system(command.c_str());
+    }
+}
 
 void printjadval(int jadval[4][4])
 {
@@ -500,7 +524,6 @@ void game2048()
                 if (oldjadval[i][j] != jadval[i][j])
                 {
                     moved = true;
-
                     if (oldjadval[i][j] != 0 && jadval[i][j] == oldjadval[i][j] * 2)
                     {
                         merged = true;
@@ -529,6 +552,7 @@ void game2048()
             cout << "YOU WIN\n";
             playWinSound();
             Sleep(2000);
+            openResultInNotepad(playerName, score, "WINNER!");
             break;
         }
 
@@ -539,6 +563,7 @@ void game2048()
             cout << "YOU LOST\n";
             playLoseSound();
             Sleep(2000);
+            openResultInNotepad(playerName, score, "GAME OVER");
             break;
         }
     }
@@ -550,7 +575,6 @@ void game2048()
         file.close();
     }
 }
-
 void drawFrame()
 {
     setColor(15);
