@@ -592,7 +592,7 @@ void playCustom()
     clear();
     drawFrame();
     setColor(10);
-    centerText("Enter your name : ", 20);
+    centerText("Enter Your Name : ", 20);
 
     string username;
     cin >> username;
@@ -700,16 +700,23 @@ void playCustom()
     }
 }
 
-void playDefault(string username)
+void playDefault()
 {
     bool playAgain = true;
 
     while (playAgain)
     {
+
         int Total = 0;
         clear();
+        soundStartGame();
+
         system("color 0F");
         drawFrame();
+        centerText("Enter Your Name : ", 20);
+        Sleep(2000);
+        string username;
+        cin >> username;
 
         while (Total < 20)
         {
@@ -718,11 +725,15 @@ void playDefault(string username)
             drawFrame();
 
             setColor(2);
-            centerText("◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇", 18);
-            centerText("◇                    ◇", 19);
+            centerText("◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇", 17);
+            centerText("◇                           ◇", 18);
+
+            centerText("◇                     ◇", 19);
             centerText("◇   TOTAL : " + to_string(Total) + "   ◇", 20);
-            centerText("◇                    ◇", 21);
-            centerText("◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇", 22);
+            centerText("◇                     ◇", 21);
+            centerText("◇                           ◇", 22);
+
+            centerText("◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇", 23);
 
             setColor(15);
             centerText("Choose 1 or 2", 16);
@@ -749,10 +760,10 @@ void playDefault(string username)
 
         clear();
         drawFrame();
-        Sleep(1000);
+        Sleep(500);
 
         setColor(10);
-        centerText(username + " is the WINNER!", 12);
+        centerText(username + " Is The WINNER ! ", 12);
         Sleep(3000);
 
         int choice = 0;
@@ -763,7 +774,7 @@ void playDefault(string username)
             clear();
             drawFrame();
             setColor(15);
-            centerText("Would you like to continue?", 10);
+            centerText("Would you like to continue ?", 10);
 
             for (int i = 0; i < 2; i++)
             {
@@ -814,8 +825,7 @@ int main()
         }
         else
         {
-            string username = " SADF ";
-            playDefault(username);
+            playDefault();
         }
     }
 
