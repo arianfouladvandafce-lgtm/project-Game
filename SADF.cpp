@@ -539,6 +539,46 @@ void drawFrame2(char a, char y, char c, char d)
         cout << d;
     }
 }
+bool exitConfirm()
+{
+    int choice = 0;
+    string opt[2] = {"Yes", "No"};
+
+    while (true)
+    {
+        clear();
+        drawFrame();
+        centerText("+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  +", 18);
+        centerText("|                                          |", 19);
+        centerText("|  Are you sure that you want to EXIT ???  |", 20);
+        centerText("|                                          |", 21);
+        centerText("+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  +", 22);
+
+        for (int i = 0; i < 2; i++)
+        {
+            setColor(i == choice ? 12 : 15);
+            centerText(opt[i], 24 + i);
+        }
+
+        int k = _getch();
+        if (k == 224)
+        {
+            k = _getch();
+            if (k == 75 && choice > 0)
+                choice--;
+            Beep(750, 30);
+            if (k == 77 && choice < 1)
+                choice++;
+            Beep(750, 30);
+        }
+        else if (k == 13)
+        {
+            Beep(900, 50);
+            Beep(1300, 80);
+            return choice == 0;
+        }
+    }
+}
 
 void playCustom()
 {
@@ -642,37 +682,21 @@ void playCustom()
     centerText(winner, 20);
     soundStartGame();
     Sleep(5000);
-}
-bool exitConfirm()
-{
-    int choice = 0;
-    string opt[2] = {"Yes", "No"};
-
-    while (true)
+    Beep(800, 70);
+    Beep(1100, 90);
+    if (exitConfirm())
     {
-        clear();
-        drawFrame();
-        centerText("Are you sure that you want to exit???", 20);
-
-        for (int i = 0; i < 2; i++)
-        {
-            setColor(i == choice ? 12 : 15);
-            centerText(opt[i], 22 + i);
-        }
-
-        int k = _getch();
-        if (k == 224)
-        {
-            k = _getch();
-            if (k == 75 && choice > 0)
-                choice--;
-            if (k == 77 && choice < 1)
-                choice++;
-        }
-        else if (k == 13)
-        {
-            return choice == 0;
-        }
+        Beep(1100, 60);
+        Beep(800, 90);
+        Sleep(1500);
+        exit(0);
+    }
+    else
+    {
+        Beep(1000, 40);
+        Beep(1400, 50);
+        Beep(1100, 70);
+        playCustom();
     }
 }
 
