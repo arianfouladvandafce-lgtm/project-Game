@@ -683,8 +683,9 @@ bool exitConfirm()
     }
 }
 
-void playCustom()
+void playCustom() 
 {
+
     clear();
     system("color F5");
     drawFrame();
