@@ -747,9 +747,18 @@ void playCustom()
         centerText("<<<<<<<<<<*>>>>>>>>>>>", 25);
         centerText("|                    |", 24);
         centerText(username, 24);
-
+        char key = toupper(_getch());
         int userChoice;
-        cin >> userChoice;
+
+        if (key == 'N')
+        {
+            userChoice = N;
+        }
+        else
+        {
+            userChoice = M;
+        }
+
         Total += userChoice;
 
         if (Total >= X)
